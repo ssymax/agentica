@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=Newsreader:wght@400&display=swap');
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Map CSS custom properties → Tailwind v4 utility tokens ─────────────── */
+@theme inline {
+  /* Fonts */
+  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-serif: 'Newsreader', Georgia, serif;
+
+  /* Radius */
+  --radius-sm:   calc(var(--radius) - 6px);
+  --radius-md:   calc(var(--radius) - 4px);
+  --radius-lg:   var(--radius);
+  --radius-full: 9999px;
+
+  /* Core colors */
+  --color-background:        hsl(var(--background));
+  --color-background-subtle: hsl(var(--background-subtle));
+  --color-background-muted:  hsl(var(--background-muted));
+
+  --color-foreground:        hsl(var(--foreground));
+  --color-muted-foreground:  hsl(var(--muted-foreground));
+  --color-subtle-foreground: hsl(var(--subtle-foreground));
+
+  --color-card:              hsl(var(--card));
+  --color-card-foreground:   hsl(var(--card-foreground));
+
+  --color-popover:           hsl(var(--popover));
+  --color-popover-foreground:hsl(var(--popover-foreground));
+
+  --color-primary:           hsl(var(--primary));
+  --color-primary-foreground:hsl(var(--primary-foreground));
+
+  --color-secondary:         hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent:            hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-light:      hsl(var(--accent-light));
+  --color-accent-border:     hsl(var(--accent-border));
+
+  --color-muted:             hsl(var(--muted));
+  --color-destructive:       hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border:            hsl(var(--border));
+  --color-border-light:      hsl(var(--border-light));
+  --color-input:             hsl(var(--input));
+  --color-ring:              hsl(var(--ring));
+}
+
+/* ── Design tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --background:        0 0% 100%;
+  --background-subtle: 0 0% 98%;
+  --background-muted:  0 0% 96%;
+
+  /* Foreground / Text */
+  --foreground:        20 6% 10%;
+  --muted-foreground:  25 5% 32%;
+  --subtle-foreground: 20 4% 64%;
+
+  /* Card */
+  --card:              0 0% 100%;
+  --card-foreground:   20 6% 10%;
+
+  /* Popover */
+  --popover:           0 0% 100%;
+  --popover-foreground:20 6% 10%;
+
+  /* Primary */
+  --primary:           20 6% 10%;
+  --primary-foreground:0 0% 100%;
+
+  /* Secondary */
+  --secondary:         0 0% 100%;
+  --secondary-foreground: 20 6% 10%;
+
+  /* Accent (orange) */
+  --accent:            22 93% 46%;
+  --accent-foreground: 0 0% 100%;
+  --accent-light:      33 100% 96%;
+  --accent-border:     28 100% 83%;
+
+  /* Muted */
+  --muted:             0 0% 96%;
+
+  /* Destructive */
+  --destructive:       0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Border & Input */
+  --border:            20 6% 90%;
+  --border-light:      30 14% 94%;
+  --input:             20 6% 90%;
+  --ring:              22 93% 46%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background:        20 6% 10%;
+  --background-subtle: 20 5% 13%;
+  --background-muted:  20 5% 16%;
+  --foreground:        0 0% 98%;
+  --muted-foreground:  20 4% 64%;
+  --subtle-foreground: 20 4% 48%;
+  --card:              20 6% 10%;
+  --card-foreground:   0 0% 98%;
+  --popover:           20 6% 10%;
+  --popover-foreground:0 0% 98%;
+  --primary:           0 0% 98%;
+  --primary-foreground:20 6% 10%;
+  --secondary:         20 5% 16%;
+  --secondary-foreground: 0 0% 98%;
+  --muted:             20 5% 16%;
+  --accent:            22 93% 46%;
+  --accent-foreground: 0 0% 100%;
+  --accent-light:      22 30% 15%;
+  --accent-border:     22 40% 25%;
+  --border:            20 5% 20%;
+  --border-light:      20 5% 18%;
+  --input:             20 5% 20%;
+  --ring:              22 93% 46%;
+}
+
+/* ── Base layer ──────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 400;
+  }
+}
+
+/* ── Prose / markdown content ───────────────────────────────────────────── */
+.prose {
+  color: hsl(var(--foreground));
+  max-width: none;
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 400;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}
+.prose p { margin-bottom: 0.75em; }
+.prose ul, .prose ol { padding-left: 1.5em; margin-bottom: 0.75em; }
+.prose li { margin-bottom: 0.25em; }
+.prose strong { font-weight: 600; }
+.prose code {
+  background: hsl(var(--muted));
+  color: hsl(var(--accent));
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+}
+.prose pre {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border-radius: var(--radius);
+  padding: 1em;
+  overflow-x: auto;
+  position: relative;
+  margin-bottom: 1em;
+}
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 0.85em;
+}
+.prose blockquote {
+  border-left: 3px solid hsl(var(--accent));
+  padding-left: 1em;
+  color: hsl(var(--muted-foreground));
+  margin: 0.75em 0;
+}
+.prose a {
+  color: hsl(var(--accent));
+  text-decoration: underline;
+}

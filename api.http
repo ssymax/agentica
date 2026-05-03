@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:{{$dotenv BACKEND_PORT}}
+@llmBaseUrl = {{$dotenv LLM_BASE_URL}}
+@llmApiKey = {{$dotenv LLM_API_KEY}}
+
+### Health check
+GET {{baseUrl}}/health
+
+### List all tickets
+GET {{baseUrl}}/api/tickets
+
+### List tickets by status (open | in_progress | resolved)
+GET {{baseUrl}}/api/tickets?status=open
+
+### Get single ticket
+GET {{baseUrl}}/api/tickets/1
+
+### Stream AI summary for a ticket
+GET {{baseUrl}}/api/tickets/1/summary
+
+### Chat with support agent
+POST {{baseUrl}}/api/chat
+Content-Type: application/json
+
+{
+  "messages": [
+    { "role": "user", "content": "Hello, I need help with my account." }
+  ]
+}
+
+### Discover available LLM models
+GET {{llmBaseUrl}}/v1/models
+Authorization: Bearer {{llmApiKey}}

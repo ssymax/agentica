@@ -1,0 +1,12 @@
+[project]
+name = "agentica-backend"
+version = "1.0.0"
+description = "HelpDesk API with streaming AI summaries"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi==0.136.1",
+    "uvicorn[standard]==0.46.0",
+    "asyncpg==0.31.0",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.2",
+]

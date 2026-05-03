@@ -1,0 +1,73 @@
+services:
+  db:
+    profiles: [local]
+    image: postgres:17-alpine
+    container_name: agentica_db
+    environment:
+      POSTGRES_USER: helpdesk
+      POSTGRES_PASSWORD: helpdesk
+      POSTGRES_DB: helpdesk
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U helpdesk -d helpdesk"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    profiles: [local]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: .env
+    command: python migrate.py
+    restart: no
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+
+  backend:
+    profiles: [local]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agentica_backend
+    env_file:
+      - .env
+    ports:
+      - "${BACKEND_PORT}:8000"
+    restart: on-failure
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+
+  frontend:
+    profiles: [local]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: agentica_frontend
+    environment:
+      VITE_DEV_PORT: ${FRONTEND_PORT:-3000}
+      VITE_API_PROXY_TARGET: http://backend:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
