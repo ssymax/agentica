@@ -22,7 +22,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     env_file: .env
-    command: sh -c "for i in 1 2 3 4 5; do python migrate.py && exit 0 || ([ $$i -lt 5 ] && sleep 5); done; exit 1"
+    command: sh -c "bash wait-for-postgres.sh python migrate.py"
     restart: no
     volumes:
       - ./backend:/app
