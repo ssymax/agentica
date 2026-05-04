@@ -2,15 +2,13 @@ import type { ReactNode } from 'react';
 
 interface NavItemProps {
   active: boolean;
-  onClick: () => void;
   icon: ReactNode;
   label: string;
 }
 
-export function NavItem({ active, onClick, icon, label }: NavItemProps) {
+export function NavItem({ active, icon, label }: NavItemProps) {
   return (
-    <button
-      onClick={onClick}
+    <div
       className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
         active
           ? 'bg-accent-light text-accent font-medium ring-1 ring-accent-border'
@@ -19,6 +17,6 @@ export function NavItem({ active, onClick, icon, label }: NavItemProps) {
     >
       {icon}
       {label}
-    </button>
+    </div>
   );
 }
