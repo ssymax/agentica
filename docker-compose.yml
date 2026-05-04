@@ -18,22 +18,17 @@ services:
       retries: 10
 
   migrate:
-    profiles: [local]
     build:
       context: ./backend
       dockerfile: Dockerfile
     env_file: .env
     command: python migrate.py
     restart: no
-    depends_on:
-      db:
-        condition: service_healthy
     volumes:
       - ./backend:/app
       - /app/.venv
 
   backend:
-    profiles: [local]
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -52,7 +47,6 @@ services:
       - /app/.venv
 
   frontend:
-    profiles: [local]
     build:
       context: ./frontend
       dockerfile: Dockerfile
