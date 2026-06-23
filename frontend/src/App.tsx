@@ -1,21 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Sidebar } from './components/Sidebar'
 import { ChatInterface } from './components/ChatInterface'
 import { TicketDashboard } from './components/TicketDashboard'
+import { TicketLayout } from './components/TicketLayout'
+import { TicketDetailRoute } from './components/TicketDetailRoute'
 import type { ChatMessage, ChatSession, Ticket, TicketStatus, View } from './types'
-
-function makeId() {
-  return Math.random().toString(36).slice(2)
-}
-
-function makeSession(): ChatSession {
-  return { id: makeId(), title: 'New Chat', messages: [], createdAt: new Date().toISOString() }
-}
+import { makeSession } from './utils/session'
 
 const firstSession = makeSession()
 
 export function App() {
-  const [view, setView] = useState<View>('chat')
+  const location = useLocation()
   const [darkMode, setDarkMode] = useState(false)
   const [sessions, setSessions] = useState<ChatSession[]>([firstSession])
   const [activeSessionId, setActiveSessionId] = useState(firstSession.id)
@@ -25,6 +21,8 @@ export function App() {
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null)
   const [statusFilter, setStatusFilter] = useState<TicketStatus | 'all'>('open')
   const [ticketsLoading, setTicketsLoading] = useState(false)
+
+  const currentView: View = location.pathname.startsWith('/tickets') ? 'tickets' : 'chat'
 
   const fetchTickets = useCallback(async (filter: TicketStatus | 'all') => {
     setTicketsLoading(true)
@@ -44,8 +42,8 @@ export function App() {
   }, [])
 
   useEffect(() => {
-    if (view === 'tickets') void fetchTickets(statusFilter)
-  }, [view, statusFilter, fetchTickets])
+    if (currentView === 'tickets') void fetchTickets(statusFilter)
+  }, [currentView, statusFilter, fetchTickets])
 
   const activeSession = sessions.find((s) => s.id === activeSessionId) ?? sessions[0]
 
@@ -61,12 +59,10 @@ export function App() {
     const s = makeSession()
     setSessions((prev) => [s, ...prev])
     setActiveSessionId(s.id)
-    setView('chat')
   }, [])
 
   const selectSession = useCallback((id: string) => {
     setActiveSessionId(id)
-    setView('chat')
   }, [])
 
   const deleteSession = useCallback((id: string) => {
@@ -83,7 +79,6 @@ export function App() {
       setActiveSessionId(next.id)
       return [next]
     })
-    setView('chat')
   }, [activeSessionId])
 
   const handleMessagesChange = useCallback((messages: ChatMessage[]) => {
@@ -102,8 +97,7 @@ export function App() {
   return (
     <div className={`flex h-screen overflow-hidden ${darkMode ? 'dark' : ''}`}>
       <Sidebar
-        activeView={view}
-        onViewChange={setView}
+        activeView={currentView}
         darkMode={darkMode}
         onToggleDark={toggleDark}
         sessions={sessions}
@@ -112,29 +106,50 @@ export function App() {
         onSelectSession={selectSession}
         onDeleteSession={deleteSession}
         tickets={tickets}
-        selectedTicketId={selectedTicketId}
         statusFilter={statusFilter}
         ticketsLoading={ticketsLoading}
-        onSelectTicket={setSelectedTicketId}
         onFilterChange={setStatusFilter}
       />
       <main className="flex-1 overflow-hidden">
-        {view === 'chat' ? (
-          <ChatInterface
-            key={activeSession.id}
-            initialMessages={activeSession.messages}
-            onMessagesChange={handleMessagesChange}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ChatInterface
+                key={activeSession.id}
+                initialMessages={activeSession.messages}
+                onMessagesChange={handleMessagesChange}
+              />
+            }
           />
-        ) : (
-          <TicketDashboard
-            tickets={tickets}
-            selectedId={selectedTicketId}
-            statusFilter={statusFilter}
-            isLoading={ticketsLoading}
-            onSelect={setSelectedTicketId}
-            onFilterChange={setStatusFilter}
-          />
-        )}
+          <Route
+            path="/tickets"
+            element={
+              <TicketLayout
+                tickets={tickets}
+                selectedTicketId={selectedTicketId}
+                statusFilter={statusFilter}
+                ticketsLoading={ticketsLoading}
+                onFilterChange={setStatusFilter}
+              />
+            }
+          >
+            <Route
+              index
+              element={
+                <TicketDashboard
+                  tickets={tickets}
+                  selectedId={selectedTicketId}
+                  statusFilter={statusFilter}
+                  isLoading={ticketsLoading}
+                  onSelect={setSelectedTicketId}
+                  onFilterChange={setStatusFilter}
+                />
+              }
+            />
+            <Route path=":id" element={<TicketDetailRoute />} />
+          </Route>
+        </Routes>
       </main>
     </div>
   )
